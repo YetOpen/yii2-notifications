@@ -148,9 +148,10 @@ var Notifications = (function(opts) {
             timeout: opts.xhrTimeout,
             success: function(data) {
                 setCount(data.count);
+                startPoll();
             },
             complete: function() {
-                startPoll();
+
             }
         });
     };
