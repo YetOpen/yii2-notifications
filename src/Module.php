@@ -18,7 +18,7 @@ class Module extends \yii\base\Module
      *
      * @param Notification $notification
      * @param array|null $channels
-     * @return Channel|null return the channel
+     * @return void
      */
     public function send($notification, array $channels = null){
         if($channels === null){
@@ -27,7 +27,7 @@ class Module extends \yii\base\Module
 
         foreach ((array)$channels as $id) {
             $channel = $this->getChannel($id);
-            if(!$notification->shouldSend($channel)){
+            if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
                 continue;
             }
 

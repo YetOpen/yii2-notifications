@@ -54,6 +54,10 @@ Notifications is often used as an application module and configured in the appli
                         'from' => 'example@email.com'
                     ],
                 ],
+                'sms' => [
+                    'class' => 'webzop\notifications\channels\SmsChannel',
+                    'sender' => 'your_service_component', // The key of the component used to send text messages 
+                ],
                 'web' => [
                     'class' => 'webzop\notifications\channels\WebChannel',
                     'enable' => true,                                       // OPTIONAL (default: true) enable/disable web channel
@@ -290,7 +294,7 @@ So you can call the Notifications widget in your app layout to show generated no
 This channel is used to send web push notification to subscriber. Each notification subscription will be stored in the database, so before using this channel, you have to run its migrations scripts:
 
 ```bash
-./yii migrate/up --migrationPath=vendor/webzop/yii2-notifications/migrations/
+./yii migrate/up --migrationPath=vendor/webzop/yii2-notifications/src/migrations/
 ```
 
 In order to promp the user for allowing push notifications on his device the following widged should be loaded in your main app.

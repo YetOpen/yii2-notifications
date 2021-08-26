@@ -14,7 +14,7 @@ class NotificationsAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public $sourcePath = __DIR__.'/assets';
+    public $sourcePath = __DIR__.'/src/assets';
 
     /**
      * @inheritdoc
