@@ -275,7 +275,7 @@ You also should configure the channel in you application config:
 This channel is used to show small notifications as above image preview. The notifications will stored in database, so before using this channel, you have to run its migrations scripts:
 
 ```bash
-./yii migrate/up --migrationPath=vendor/webzop/yii2-notifications/migrations/
+./yii migrate/up --migrationPath=vendor/webzop/yii2-notifications/src/migrations/
 ```
 
 So you can call the Notifications widget in your app layout to show generated notifications:
