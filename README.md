@@ -320,6 +320,8 @@ So you can call the Notifications widget in your app layout to show generated no
 </div>
 ```
 
+### Send notifications at a later time
+
 To send notifications at a later time you'll need to execute one of the following commands.
 To obtains and send notifications in a loop until the queue of notifications to be sent at this time is empty:
 
