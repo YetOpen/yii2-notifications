@@ -2,6 +2,9 @@
 
 namespace webzop\notifications\channels;
 
+use webzop\notifications\model\UserChannels;
+use webzop\notifications\Module;
+use yetopen\helpers\ArrayHelper;
 use Yii;
 use yii\di\Instance;
 use yii\base\InvalidConfigException;
@@ -35,12 +38,12 @@ class EmailChannel extends Channel
     }
 
     /**
-     * Sends a notification in this channel.
+     * {@inheritdoc}
      */
-    public function send(Notification $notification)
+    public function sendNotification($notification)
     {
         $message = $this->composeMessage($notification);
-        $message->send($this->mailer);
+        return $message->send($this->mailer);
     }
 
     /**
@@ -52,12 +55,44 @@ class EmailChannel extends Channel
     protected function composeMessage($notification)
     {
         if(empty($this->message['to'])){
-            throw new InvalidConfigException('The "to" option must be set in EmailChannel::message.');
+            $this->message['to'] = $this->getEmailTo($notification);
         }
-        $message = $this->mailer->compose();
+        $this->mailer->getView()->params['language'] = $notification->language;
+        $message = $this->mailer->compose('@vendor/webzop/yii2-notifications/src/views/default/mail', [
+            'content' => (string)$notification->getDescription(),
+            'language' => $notification->language,
+        ]);
         Yii::configure($message, $this->message);
-        $message->setSubject((string)$notification->getTitle());
-        $message->setTextBody((string)$notification->getDescription());
+        $message->setSubject($notification->getTitle());
+        foreach ($notification->getAttachments() as $attachment) {
+            $message->attachContent(file_get_contents($attachment['path']), [
+                'fileName' => $attachment['filename'],
+                'contentType' => $attachment['type']
+            ]);
+        }
         return $message;
+    }
+
+    /**
+     * Gets the email for the user of the given notification.
+     * @param $notification
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    protected function getEmailTo($notification)
+    {
+        // Checking if set as a user notification channel
+        $userChannel = UserChannels::findByChannel($notification->userId, $this->id);
+        if($userChannel && $userChannel->active) {
+            return $userChannel->receiver;
+        }
+        // Checking in case it's available directly on the user
+        if(
+            ($user = Module::getInstance()->identityClass::findOne($notification->userId)) &&
+            ($email = ArrayHelper::getValue($user, 'email'))
+        ) {
+            return $email;
+        }
+        throw new InvalidConfigException('The "to" option must be set in EmailChannel::message.');
     }
 }

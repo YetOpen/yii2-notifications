@@ -9,6 +9,7 @@ use yii\helpers\Url;
 use yii\helpers\Json;
 use yii\db\Query;
 use webzop\notifications\NotificationsAsset;
+use webzop\notifications\model\Notifications as NotificationModel;
 
 
 class Notifications extends \yii\base\Widget
@@ -127,9 +128,9 @@ class Notifications extends \yii\base\Widget
 
     public static function getCountUnseen(){
         $userId = Yii::$app->getUser()->getId();
-        $count = (new Query())
-            ->from('{{%notifications}}')
+        $count = NotificationModel::find()
             ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId])
+            ->andWhere(['<=', 'sent_at', date('Y-m-d H:i:s')])
             ->andWhere(['seen' => false])
             ->count();
         return $count;
