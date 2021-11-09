@@ -2,6 +2,9 @@
 
 namespace webzop\notifications;
 
+use Yii;
+use yii\console\Application as ConsoleApplication;
+
 /**
  * notifications module bootstrap class.
  */
@@ -19,6 +22,10 @@ class Bootstrap implements \yii\base\BootstrapInterface
                 'sourceLanguage' => 'en-US',
                 'basePath' => '@webzop/notifications/messages',
             ];
+        }
+
+        if(is_a($app, ConsoleApplication::class)) {
+            $app->getModule('notifications')->controllerNamespace = 'webzop\notifications\commands';
         }
     }
 }

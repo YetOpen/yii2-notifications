@@ -319,3 +319,19 @@ So you can call the Notifications widget in your app layout to show generated no
     <?php echo \webzop\notifications\widgets\WebNotifications::widget() ?>
 </div>
 ```
+
+To send notifications at a later time you'll need to execute one of the following commands.
+To obtains and send notifications in a loop until the queue of notifications to be sent at this time is empty:
+
+```sh
+yii notifications/command/run
+```
+
+Or you can use a command that launches a daemon which infinitely queries the notifications:
+
+```sh
+yii notifications/command/listen
+```
+
+You can follow [this guide](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/worker.md) to start the worker,
+adapting it to this plugin commands.

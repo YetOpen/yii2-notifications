@@ -10,6 +10,7 @@ use yii\data\Pagination;
 use yii\helpers\Url;
 use webzop\notifications\helpers\TimeElapsed;
 use webzop\notifications\widgets\Notifications;
+use webzop\notifications\model\Notifications as NotificationModel;
 
 class DefaultController extends Controller
 {
@@ -39,8 +40,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $userId = Yii::$app->getUser()->getId();
-        $query = (new Query())
-            ->from('{{%notifications}}')
+        $query = NotificationModel::find()
             ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId]);
 
         $pagination = new Pagination([
@@ -52,6 +52,7 @@ class DefaultController extends Controller
             ->orderBy(['id' => SORT_DESC])
             ->offset($pagination->offset)
             ->limit($pagination->limit)
+            ->asArray()
             ->all();
 
         $notifs = $this->prepareNotifications($list);
@@ -65,11 +66,12 @@ class DefaultController extends Controller
     public function actionList()
     {
         $userId = Yii::$app->getUser()->getId();
-        $list = (new Query())
-            ->from('{{%notifications}}')
+        $list = NotificationModel::find()
             ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId])
+            ->andWhere(['<=', 'sent_at', date('Y-m-d H:i:s')])
             ->orderBy(['id' => SORT_DESC])
             ->limit(10)
+            ->asArray()
             ->all();
         $notifs = $this->prepareNotifications($list);
         $this->ajaxResponse(['list' => $notifs]);

@@ -114,13 +114,9 @@ class WebChannel extends Channel
 
 
     /**
-     * Send the web push notification
-     *
-     * @param Notification $notification
-     * @return bool true if at least one notification reach the recipient
-     * @throws ErrorException
+     * {@inheritdoc}
      */
-    public function send(Notification $notification) {
+    public function sendNotification($notification) {
 
         if(!$this->enable) {
             return false;

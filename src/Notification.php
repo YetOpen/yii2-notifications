@@ -13,11 +13,23 @@ use yii\base\InvalidConfigException;
  * @property integer $userId
  * @property array $data
  */
-abstract class Notification extends \yii\base\BaseObject
+class Notification extends \yii\base\BaseObject
 {
     public $key;
 
     public $userId = 0;
+
+    public $sendAt = NULL;
+
+    public $title = '';
+
+    public $description = '';
+
+    public $route = NULL;
+
+    public $attachments = [];
+
+    public $language;
 
     public $data = [];
 
@@ -75,7 +87,8 @@ abstract class Notification extends \yii\base\BaseObject
      */
     public function shouldSend($channel)
     {
-        // If the renotification_time params is false we don't need to check the interval
+        // If the re-notification time params is false we don't need to check the interval, the notification should
+        // be sent only if it was set to be sent at the current time or before
         if (empty($this->renotification_time)) {
             return TRUE;
         }
@@ -83,20 +96,22 @@ abstract class Notification extends \yii\base\BaseObject
         // Workaround:
         // After the notification on the screen channel, the next are not sent because it finds the one just sent.
         // Adds 1 second to solve this problem.
-        $margin = static::getLimit('PT1S')->getTimestamp();
+        $margin = static::getLimit('PT1S')->format('Y-m-d H:i:s');
 
         // The notification can be sent if there aren't others with same user/key sent in the period specified in
         // renotification_time params
-        $end = static::getLimit($this->renotification_time)->getTimestamp();
+        $end = static::getLimit($this->renotification_time)->format('Y-m-d H:i:s');
         $className = $this->className();
         $notifications = Notifications::find()
             ->andWhere([
+                'channel'   => $channel->id,
                 'user_id'   => $this->userId,
                 'key'       => $this->key,
                 'class'     => strtolower(substr($className, strrpos($className, '\\')+1, -12)),
+                'sent'      => false,
             ])
-            ->andWhere(['>', 'created_at', $end])
-            ->andWhere(['<', 'created_at', $margin])
+            ->andWhere(['>', 'send_at', $end])
+            ->andWhere(['<', 'send_at', $margin])
             ->exists();
 
         return !$notifications;
@@ -107,15 +122,52 @@ abstract class Notification extends \yii\base\BaseObject
      *
      * @return string
      */
-    abstract public function getTitle();
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
     /**
      * Gets the notification description
      *
      * @return string|null
      */
-    public function getDescription(){
-        return null;
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Gets the notification language code
+     *
+     * @return string|null
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * Gets the notification attachments
+     *
+     * @return array
+     */
+    public function getAttachments(){
+        $attachments = [];
+        foreach ($this->attachments as $attachment) {
+            // The attachment was set as an array already parsed
+            if(!is_string($attachment)) {
+                $attachments[] = $attachment;
+                continue;
+            }
+
+            $attachments[] = [
+                'path' => $attachment,
+                'filename' => basename($attachment),
+                'type' => mime_content_type($attachment),
+            ];
+        }
+        return $attachments;
     }
 
     /**
@@ -124,7 +176,7 @@ abstract class Notification extends \yii\base\BaseObject
      * @return array|null
      */
     public function getRoute(){
-        return null;
+        return $this->route;
     }
 
     /**
@@ -237,13 +289,14 @@ abstract class Notification extends \yii\base\BaseObject
     /**
      * Sends this notification to all channels
      *
+     * @return bool If the sending of the notification was successful.
      */
     public function send(){
         $module = Yii::$app->getModule('notifications');
         if(is_null($module)) {
             throw new InvalidConfigException("Please set up the module in the web/console settings, see README for instructions");
         }
-        $module->send($this);
+        return $module->send($this);
     }
 
     /**
