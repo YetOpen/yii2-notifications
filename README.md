@@ -320,20 +320,58 @@ So you can call the Notifications widget in your app layout to show generated no
 </div>
 ```
 
-### Send notifications at a later time
+## Send notifications at a later time
 
-To send notifications at a later time you'll need to execute one of the following commands.
-To obtains and send notifications in a loop until the queue of notifications to be sent at this time is empty:
+To send notifications at a later time you'll need to set up either a cron or a daemon.
+
+### Cron
+
+You can also start workers using cron. Here you have to use the `queue/run` command.
+
+Config example:
 
 ```sh
-yii notifications/command/run
+* * * * * /usr/bin/php /var/www/my_project/yii notifications/command/run
 ```
 
-Or you can use a command that launches a daemon which infinitely queries the notifications:
+In this case cron will run the command every minute.
+
+### Systemd
+
+Systemd is an init system used on Linux to bootstrap the user space. To configure workers startup
+using systemd, create a config file named `yii-notifications.service` in `/etc/systemd/system` with
+the following content:
+
+```conf
+[Unit]
+Description=Yii Notifications Worker
+After=network.target
+After=mysql.service
+Requires=mysql.service
+
+[Service]
+User=www-data # remember to set the web user
+Group=www-data # remember to set the web user group
+ExecStart=/usr/bin/php /var/www/html/your_project/yii notifications/command/listen
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+You need to reload systemd in order to re-read its configuration:
 
 ```sh
-yii notifications/command/listen
+systemctl daemon-reload
 ```
 
-You can follow [this guide](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/worker.md) to start the worker,
-adapting it to this plugin commands.
+Set of commands to control workers:
+
+```sh
+# To start the worker
+systemctl start yii-notifications
+
+# To start the worker at system boot
+systemctl enable yii-notifications
+```
+
