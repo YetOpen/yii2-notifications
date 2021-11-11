@@ -54,7 +54,7 @@ class Module extends \yii\base\Module
         }
 
         foreach ((array)$channels as $channelId) {
-            $channel = $this->getChannel($channelId, $forceChannelsReload);
+            $channel = $this->getChannel($channelId);
             if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
                 continue;
             }
