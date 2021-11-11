@@ -47,6 +47,7 @@ class SmsChannel extends Channel
         if(!is_array($this->message['to'])) {
             $this->message['to'] = [$this->message['to']];
         }
+        Yii::debug('Sending SMS to '.implode(', ', $this->message['to']), __METHOD__);
 
         // Text messages have a maximum length if it's exceeded it will be sent split into multiple sms
         $maxLength = $this->sender->maxTextLength;

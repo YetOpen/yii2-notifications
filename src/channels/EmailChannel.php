@@ -57,6 +57,7 @@ class EmailChannel extends Channel
         if(empty($this->message['to'])){
             $this->message['to'] = $this->getEmailTo($notification);
         }
+        Yii::debug("Sending email to {$this->message['to']}", __METHOD__);
         $this->mailer->getView()->params['language'] = $notification->language;
         $message = $this->mailer->compose('@vendor/webzop/yii2-notifications/src/views/default/mail', [
             'content' => (string)$notification->getDescription(),

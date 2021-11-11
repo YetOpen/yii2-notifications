@@ -3,21 +3,23 @@
 namespace webzop\notifications\commands;
 
 
+use yii\console\Controller;
 use yii\console\Exception;
-use yii\queue\cli\Command;
 
-class CommandController extends Command
+/**
+ * Console commands for the module.
+ * @since 0.3.1
+ */
+class CommandController extends Controller
 {
     /**
      * @var Worker
      */
-    public $worker;
+    protected $worker;
     /**
      * @var string
      */
     public $defaultAction = 'run';
-
-    public $isolate = false;
 
     public function beforeAction($action)
     {
@@ -26,14 +28,6 @@ class CommandController extends Command
             'module' => $this->module,
         ]);
         return parent::beforeAction($action);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function isWorkerAction($actionID)
-    {
-        return in_array($actionID, ['run', 'listen'], true);
     }
 
     /**

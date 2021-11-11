@@ -71,12 +71,13 @@ class Worker extends \yii\queue\cli\Queue
             while ($canContinue()) {
                 if ($payload = $this->reserve()) {
                     foreach ($payload as $notification) {
-                        $channel = $this->module->getChannel($notification->channel);
+                        $channel = $this->module->getChannel($notification->channel, true);
                         $tempNotification = Notification::create($notification->key, [
                             'userId' => $notification->user_id,
                             'title' => $notification->message,
                             'description' => $notification->content,
                             'attachments' => $notification->attachments,
+                            'language' => $notification->language,
                             'route' => unserialize($notification->route),
                         ]);
                         if($channel->send($tempNotification)) {

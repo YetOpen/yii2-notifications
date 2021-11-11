@@ -16,6 +16,8 @@ class Module extends \yii\base\Module
 
     public $channels = [];
 
+    protected $_channels = [];
+
     public $controllerNamespace = 'webzop\notifications\controllers';
 
     public $attachmentsPath = '@root/documents/notifications';
@@ -52,7 +54,7 @@ class Module extends \yii\base\Module
         }
 
         foreach ((array)$channels as $channelId) {
-            $channel = $this->getChannel($channelId);
+            $channel = $this->getChannel($channelId, $forceChannelsReload);
             if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
                 continue;
             }
@@ -98,19 +100,20 @@ class Module extends \yii\base\Module
      * Gets the channel instance
      *
      * @param string $id the id of the channel
+     * @param bool $forceReload forces the load of the channel even if it was cached, defaults to `false`
      * @return Channel|null return the channel
      * @throws InvalidArgumentException
      */
-    public function getChannel($id){
+    public function getChannel($id, $forceReload = false){
         if(!isset($this->channels[$id])){
             throw new InvalidArgumentException("Unknown channel '{$id}'.");
         }
 
-        if (!is_object($this->channels[$id])) {
-            $this->channels[$id] = $this->createChannel($id, $this->channels[$id]);
+        if (!isset($this->_channels[$id]) || $forceReload) {
+            $this->_channels[$id] = $this->createChannel($id, $this->channels[$id]);
         }
 
-        return $this->channels[$id];
+        return $this->_channels[$id];
     }
 
     protected function createChannel($id, $config){
