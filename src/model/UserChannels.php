@@ -37,7 +37,7 @@ class UserChannels extends \yii\db\ActiveRecord
             [
                 ['channel'],
                 'unique',
-                'attributes' => ['user', 'channel'],
+                'targetAttribute' => ['user', 'channel'],
                 'message' => Yii::t('app','The channel {value} is already set for this user.'),
             ],
             [['receiver'], 'required', 'when' => function($model) {return $model->active;}, 'enableClientValidation' => false]
