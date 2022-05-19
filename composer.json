@@ -21,7 +21,7 @@
         "php": ">=7.1",
         "ext-fileinfo": "*",
         "yiisoft/yii2": "~2.0.13",
-        "minishlink/web-push": "^5.2",
+        "minishlink/web-push": "^6.2",
         "yetopen/yii2-sms-sender-interface": "*",
         "yiisoft/yii2-queue": "^2.3"
     },
