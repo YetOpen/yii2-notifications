@@ -13,6 +13,7 @@ class ScreenChannel extends Channel
      */
     public function sendNotification($notification)
     {
+        $notification->getTitle();
         // The notification will be shown via JS
         return TRUE;
     }

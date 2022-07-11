@@ -7,11 +7,14 @@ use webzop\notifications\Notification;
 use Yii;
 use yii\db\Schema;
 use yii\helpers\Json;
+use webzop\notifications\helpers\TimeElapsed;
+
 
 /**
  * This is the model class for table "{{%notifications}}".
  *
  * @property integer $id
+ * @property integer $type
  * @property string $class
  * @property string $key
  * @property string $channel
@@ -26,6 +29,7 @@ use yii\helpers\Json;
  * @property string $send_at
  * @property bool $sent
  * @property integer $created_at
+ * @property integer $managed
  */
 class Notifications extends \yii\db\ActiveRecord
 {
@@ -51,15 +55,15 @@ class Notifications extends \yii\db\ActiveRecord
             [['sent'], 'default', 'value' => false],
             [['language'], 'default', 'value' => Yii::$app->language],
             [['class', 'key', 'message', 'route', 'channel', 'sent'], 'required'],
-            [['seen', 'read', 'user_id', 'created_at'], 'integer'],
-            [['send_at'], 'safe'],
+            [['seen', 'type', 'read', 'user_id', 'created_at', 'managed'], 'integer'],
+            [['send_at'], 'datetime'],
             [['sent'], 'boolean'],
             [['content'], 'string'],
             [['class'], 'string', 'max' => 64],
             [['channel', 'key'], 'string', 'max' => 32],
             [['message', 'route'], 'string', 'max' => 255],
             [['language'], 'string', 'max' => 5],
-            [['attachments'], 'safe'],
+            [['attachments', 'type', 'seen', 'managed', 'read'], 'safe'],
             [['attachments'], 'default', 'value' => []],
         ];
     }
@@ -143,22 +147,29 @@ class Notifications extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'class' => Yii::t('app', 'Class'),
-            'key' => Yii::t('app', 'Key'),
-            'channel' => Yii::t('app', 'Channel'),
-            'message' => Yii::t('app', 'Message'),
-            'content' => Yii::t('app', 'Content'),
-            'attachments' => Yii::t('app', 'Attachments'),
-            'language' => Yii::t('app', 'Language'),
-            'route' => Yii::t('app', 'Route'),
-            'seen' => Yii::t('app', 'Seen'),
-            'read' => Yii::t('app', 'Read'),
-            'send_at' => Yii::t('app', 'Send At'),
-            'sent' => Yii::t('app', 'Sent'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'id' => Yii::t('modules/notifications', 'ID'),
+            'type' => Yii::t('modules/notifications', 'Type'),
+            'class' => Yii::t('modules/notifications', 'Class'),
+            'key' => Yii::t('modules/notifications', 'Key'),
+            'channel' => Yii::t('modules/notifications', 'Channel'),
+            'message' => Yii::t('modules/notifications', 'Message'),
+            'content' => Yii::t('modules/notifications', 'Content'),
+            'attachments' => Yii::t('modules/notifications', 'Attachments'),
+            'language' => Yii::t('modules/notifications', 'Language'),
+            'route' => Yii::t('modules/notifications', 'Route'),
+            'seen' => Yii::t('modules/notifications', 'Seen'),
+            'read' => Yii::t('modules/notifications', 'Read'),
+            'send_at' => Yii::t('modules/notifications', 'Send At'),
+            'sent' => Yii::t('modules/notifications', 'Sent'),
+            'user_id' => Yii::t('modules/notifications', 'User ID'),
+            'created_at' => Yii::t('modules/notifications', 'Created At'),
+            'managed' => Yii::t('modules/notifications', 'Managed'),
         ];
+    }
+
+    public function getNotificationsType()
+    {
+        return $this->hasOne(NotificationType::class, ['id' => 'type']);
     }
 
     /**
@@ -182,4 +193,10 @@ class Notifications extends \yii\db\ActiveRecord
             $this->attachments = Json::decode($this->attachments);
         }
     }
+
+    public function getTimeAgo()
+    {
+        return TimeElapsed::timeElapsed($this->created_at);
+    }
+
 }

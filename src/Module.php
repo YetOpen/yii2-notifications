@@ -20,7 +20,7 @@ class Module extends \yii\base\Module
 
     public $controllerNamespace = 'webzop\notifications\controllers';
 
-    public $attachmentsPath = '@root/documents/notifications';
+    public $attachmentsPath = '@app/documents/notifications';
 
     public $identityClass;
 
@@ -49,19 +49,25 @@ class Module extends \yii\base\Module
      * @return bool If the sending was successful or not.
      */
     public function send($notification, array $channels = null){
+        
         if($channels === null){
             $channels = array_keys($this->channels);
         }
-
+        
         foreach ((array)$channels as $channelId) {
+            
             $channel = $this->getChannel($channelId);
+            $type = $notification->ensureType();
             if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
                 continue;
             }
+
             $model = new Notifications([
                 'notification' => $notification,
                 'channel' => $channelId,
+                'type' => $type,
             ]);
+            
             if(!$model->save()) {
                 Yii::error('Cannot save notifications: '.VarDumper::dumpAsString($model->errors), __METHOD__);
                 return FALSE;
@@ -92,6 +98,7 @@ class Module extends \yii\base\Module
                 Yii::warning("Notification sent by channel '$channelId' has failed: " . $e->getMessage(), __METHOD__);
                 Yii::warning($e, __METHOD__);
             }
+
         }
         return TRUE;
     }
