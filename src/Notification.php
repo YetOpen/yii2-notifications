@@ -3,6 +3,7 @@
 namespace webzop\notifications;
 
 use webzop\notifications\model\Notifications;
+use webzop\notifications\model\NotificationType;
 use Yii;
 use yii\base\InvalidConfigException;
 
@@ -18,6 +19,8 @@ class Notification extends \yii\base\BaseObject
     public $key;
 
     public $userId = 0;
+
+    public $typeCode = 'RF';
 
     public $sendAt = NULL;
 
@@ -115,6 +118,28 @@ class Notification extends \yii\base\BaseObject
             ->exists();
 
         return !$notifications;
+    }
+
+    /**
+     * Ensures the exsistence of the type, if it's not present in the table it's created
+     *
+     * @return int id of the type
+     */
+    public function ensureType(){
+        $type = NotificationType::find()->andWhere(['code' => $this->typeCode])->one();
+        if(is_null($type)){
+            $type = new NotificationType([
+                'code' => $this->typeCode,
+                'name' => $this->typeCode,
+                'check_management' => false,
+                'color' => '#8e7cc3',
+                'priority' => 1
+            ]);
+            $type->save();
+
+        }
+
+        return $type->id;
     }
 
     /**

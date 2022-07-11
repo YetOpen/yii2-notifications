@@ -25,6 +25,7 @@ $this->title = Yii::t('modules/notifications', 'Notifications');
                 <span class="message"><?= Html::encode($notif['message']); ?></span>
             </a>
             <small class="timeago"><?= $notif['timeago']; ?></small>
+            <small class="send_at"><?= $notif['send_at']; ?></small>
             <span class="mark-read" data-toggle="tooltip" title="<?php if($notif['read']): ?><?= Yii::t('modules/notifications', 'Read') ?><?php else: ?><?= Yii::t('modules/notifications', 'Mark as read') ?><?php endif; ?>"></span>
         </li>
         <?php endforeach; ?>
