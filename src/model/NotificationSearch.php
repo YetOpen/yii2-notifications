@@ -11,7 +11,11 @@ use webzop\notifications\model\Notifications;
  */
 class NotificationSearch extends Notifications
 {
-    public $nameType;
+    /**
+     * @var string
+     */
+    public $created_at_filter;
+
     /**
      * {@inheritdoc}
      */
@@ -19,7 +23,7 @@ class NotificationSearch extends Notifications
     {
         return [
             [['id', 'seen','read', 'user_id', 'sent', 'created_at', 'managed'], 'integer'],
-            [['class', 'type', 'seen', 'key', 'channel', 'message', 'content', 'attachments', 'language', 'route', 'send_at', 'managed','nameType'], 'safe'],
+            [['class', 'type', 'seen', 'key', 'channel', 'message', 'content', 'attachments', 'language', 'route', 'send_at', 'managed', 'created_at_filter'], 'safe'],
         ];
     }
 
@@ -43,9 +47,6 @@ class NotificationSearch extends Notifications
     {
         $query = Notifications::find();
         $query -> joinWith('notificationsType');
-        
-
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -93,7 +94,7 @@ class NotificationSearch extends Notifications
         ]);
 
         $query->andFilterWhere(['like', 'class', $this->class])
-            ->andFilterWhere(['like', 'type', $this->nameType])
+            ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'key', $this->key])
             ->andFilterWhere(['like', 'channel', $this->channel])
             ->andFilterWhere(['like', 'message', $this->message])
@@ -101,6 +102,15 @@ class NotificationSearch extends Notifications
             ->andFilterWhere(['like', 'attachments', $this->attachments])
             ->andFilterWhere(['like', 'language', $this->language])
             ->andFilterWhere(['like', 'route', $this->route]);
+
+
+        //filter datetime range from string to integer
+        if(isset ($this->created_at_filter) && $this->created_at_filter != '' && strpos($this->created_at_filter, ' - ') !== false){
+            $date_explode = explode(" - ", $this->created_at_filter);
+            $date1 = strtotime(trim($date_explode[0]));
+            $date2 = strtotime(trim($date_explode[1]));
+            $query->andFilterWhere(['between','created_at',"$date1" , "$date2"]);
+        }
 
         return $dataProvider;
     }

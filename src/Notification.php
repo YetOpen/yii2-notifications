@@ -20,7 +20,7 @@ class Notification extends \yii\base\BaseObject
 
     public $userId = 0;
 
-    public $typeCode = 'RF';
+    public $typeCode = 'MM';
 
     public $sendAt = NULL;
 
