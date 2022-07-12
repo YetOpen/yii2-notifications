@@ -26,8 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
         'columns' => [
             'type' => [
-                'attribute' => 'nameType',
-                'label' => 'Type',
+                'attribute' => 'type',
                 'filter' => NotificationType::find()->select('name')->indexBy('id')->column(),
                 'filterInputOptions' => [
                     'class' => 'form-control',         
@@ -52,22 +51,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'created_at',
                 'label' => 'Datetime',
                 'format' => 'datetime',
-                'startAttribute' => 'start',
-                'endAttribute' => 'end',
                 'filter' => DateRangePicker::widget([
                     'model' => $searchModel,
-                    'attribute' => 'created_at',
+                    'attribute' => 'created_at_filter',
                     'convertFormat' => true,
-                    'presetDropdown' => false,
                     'pluginOptions' => [
                         'timePicker'=>true, 
                         'timePickerIncrement'=>10,
-                        'locale' => ['format' => 'm-d-Y g:i:s A']
+                        'locale' => ['format' => 'd-m-Y g:i A']
                     ]
                 ]),
                 'vAlign' => 'middle',
                 'hAlign' => 'center',
             ],
+
             'timeago' => [
                 'attribute' => 'timeAgo',
                 'value' => function ($model, $key, $index, $column){
