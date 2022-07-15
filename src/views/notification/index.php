@@ -5,17 +5,20 @@ use kartik\grid\GridView;
 Use kartik\editable\Editable;
 use webzop\notifications\model\NotificationType;
 use kartik\daterange\DateRangePicker;
+use kartik\icons\Icon;
+use webzop\notifications\dictionaries\Read;
+use webzop\notifications\dictionaries\Managed;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel webzop\notifications\model\NotificationSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-
-$this->title = 'Notifications';
+$this->title = Yii::t('modules/notifications', 'Notifications');
 $this->params['breadcrumbs'][] = $this->title;
+Icon::map($this, Icon::FA);
 ?>
 <div class="notifications-index">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" crossorigin="anonymous"></script>
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -43,22 +46,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width'=>'170px',
             ],
             'message' => [
+                'label' => 'message',
                 'attribute' => 'message',
                 'hAlign' => 'center',
                 'width'=>'200px',
             ],
             'created_at' => [
                 'attribute' => 'created_at',
-                'label' => 'Datetime',
-                'format' => 'datetime',
+                'format' => ['datetime', 'php:d/m/Y H:i'],
                 'filter' => DateRangePicker::widget([
                     'model' => $searchModel,
                     'attribute' => 'created_at_filter',
                     'convertFormat' => true,
                     'pluginOptions' => [
                         'timePicker'=>true, 
+                        'timePickerFormat' => 'H:i',
                         'timePickerIncrement'=>10,
-                        'locale' => ['format' => 'd-m-Y g:i A']
+                        'locale' => ['format' => 'd/m/Y H:i']
                     ]
                 ]),
                 'vAlign' => 'middle',
@@ -67,9 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'timeago' => [
                 'attribute' => 'timeAgo',
-                'value' => function ($model, $key, $index, $column){
-                    return $model->timeAgo;
-                }, 
                 'vAlign' => 'middle',
                 'hAlign' => 'center',
                 'width' => '200'
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute'=>'read',
                 'class' => 'kartik\grid\BooleanColumn',
                 'class' => 'kartik\grid\EditableColumn',
-                'filter' => [0 => 'Unread', 1 => 'Read'],
+                'filter' => [Read::UNREAD => Read::get(Read::UNREAD), Read::READ  => Read::get(Read::READ)],
                 'filterInputOptions' => [
                     'class' => 'form-control',         
                     'prompt' => 'All'
@@ -87,11 +88,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'asPopover' => true,
                     'format' => Editable::FORMAT_BUTTON,
                     'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                    'data' => [0 => 'Unread', 1 => 'Read'],
+                    'data' => [Read::UNREAD => Read::get(Read::UNREAD), Read::READ  => Read::get(Read::READ)],
                     'options' => ['class'=>'form-control'], 
                     'displayValueConfig'=> [
-                        '0' => '<i class="fas fa-eye-slash"></i>',
-                        '1' => '<i class="fas fa-eye"></i>',                       
+                        '0' => Icon::show('eye-slash'),
+                        '1' => Icon::show('eye'),                       
                     ],
                 ],
                 'vAlign' => 'middle',
@@ -116,13 +117,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'asPopover' => true,
                             'format' => Editable::FORMAT_BUTTON,
                             'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => [0 => 'Unmanaged', 1 => 'Managed'],
+                            'data' => [Managed::UNMANAGED => Managed::get(Managed::UNMANAGED), Managed::MANAGED  => Managed::get(Managed::MANAGED)],
                             'options' => ['class'=>'form-control'], 
                             'displayValueConfig'=> [
-                                '0' => '<i class="fas fa-times"></i>',
-                                '1' => '<i class="fas fa-check"></i>'                     
+                                '0' => Icon::show('times'),
+                                '1' => Icon::show('leaf')                    
                             ],
-                        
                         ];
                     }
 
@@ -132,11 +132,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'asPopover' => true,
                             'format' => Editable::FORMAT_BUTTON,
                             'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => [0 => 'Unmanaged', 1 => 'Managed'],
+                            'data' => [Managed::UNMANAGED => Managed::get(Managed::UNMANAGED), Managed::MANAGED  => Managed::get(Managed::MANAGED)],
                             'options' => ['class'=>'form-control'], 
                             'displayValueConfig'=> [
-                                '0' => '<i class="fas fa-times"></i>',
-                                '1' => '<i class="fas fa-check"></i>'                     
+                                '0' => Icon::show('times'),
+                                '1' => Icon::show('check')                     
                             ],
                         ];
                     }
@@ -147,7 +147,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'hAlign' => 'center',
                 
             ],
-            
             // 'id',
             // 'class',
             // 'key',

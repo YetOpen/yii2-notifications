@@ -107,8 +107,8 @@ class NotificationSearch extends Notifications
         //filter datetime range from string to integer
         if(isset ($this->created_at_filter) && $this->created_at_filter != '' && strpos($this->created_at_filter, ' - ') !== false){
             $date_explode = explode(" - ", $this->created_at_filter);
-            $date1 = strtotime(trim($date_explode[0]));
-            $date2 = strtotime(trim($date_explode[1]));
+            $date1 = date_timestamp_get(date_create_from_format('d/m/Y H:i', trim($date_explode[0])));
+            $date2 = date_timestamp_get(date_create_from_format('d/m/Y H:i', trim($date_explode[1])));
             $query->andFilterWhere(['between','created_at',"$date1" , "$date2"]);
         }
 

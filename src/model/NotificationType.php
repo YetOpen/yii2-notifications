@@ -12,7 +12,7 @@ use Yii;
  * @property string|null $name
  * @property int|null $check_management
  * @property string|null $color
- * @property integer|null $priority
+ * @property int|null $priority
  */
 class NotificationType extends \yii\db\ActiveRecord
 {
@@ -21,7 +21,7 @@ class NotificationType extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'notifications_type';
+        return '{{%notifications_type}}';
     }
 
     /**
@@ -53,15 +53,4 @@ class NotificationType extends \yii\db\ActiveRecord
             'priority' => Yii::t('modules/notifications', 'Priority'),
         ];
     }
-
-    public function getPrio(int $num){
-        $prio = [
-            0 => 'Low',
-            1 => 'Medium',
-            2 => 'High',
-        ];
-
-        return $prio[$num];
-    }
-
 }

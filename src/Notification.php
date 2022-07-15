@@ -20,7 +20,7 @@ class Notification extends \yii\base\BaseObject
 
     public $userId = 0;
 
-    public $typeCode = 'MM';
+    public $typeCode = 'GN';
 
     public $sendAt = NULL;
 
@@ -121,7 +121,7 @@ class Notification extends \yii\base\BaseObject
     }
 
     /**
-     * Ensures the exsistence of the type, if it's not present in the table it's created
+     * Ensures the exsistence of the type, if it's not present in the table it will be created
      *
      * @return int id of the type
      */
@@ -132,7 +132,7 @@ class Notification extends \yii\base\BaseObject
                 'code' => $this->typeCode,
                 'name' => $this->typeCode,
                 'check_management' => false,
-                'color' => '#8e7cc3',
+                'color' => '#ead1dc',
                 'priority' => 1
             ]);
             $type->save();
