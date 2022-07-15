@@ -40,7 +40,6 @@ class Module extends \yii\base\Module
         parent::init();
     }
 
-
     /**
      * Send a notification to all channels
      *

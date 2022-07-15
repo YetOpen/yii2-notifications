@@ -4,18 +4,21 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use \kartik\grid\GridView;
-use webzop\notifications\model\NotificationType;
+use kartik\icons\Icon;
+use webzop\notifications\dictionaries\Priority;
+use webzop\notifications\dictionaries\Manageable;
 
 
 /* @var $this yii\web\View */
 /* @var $searchModel webzop\notifications\model\NotificationTypeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Notification Types';
+$this->title = Yii::t('modules/notifications', 'Notification Types');
 $this->params['breadcrumbs'][] = $this->title;
+Icon::map($this, Icon::FA);
 ?>
+
 <div class="notification-type-index">
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" crossorigin="anonymous"></script>
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
@@ -41,10 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'check_management'=>[
                 'class'=>'kartik\grid\BooleanColumn',
-                'attribute'=>'check_management', 
+                'attribute'=>'check_management',
                 'vAlign'=>'middle',
-                'trueLabel' => 'Manageable', 
-                'falseLabel' => 'Unmanageable',
+                'trueLabel' => Manageable::get(Manageable::MANGEABLE), 
+                'falseLabel' => Manageable::get(Manageable::UNMANGEABLE),
                 'filterInputOptions' => [
                     'class' => 'form-control',         
                     'prompt' => 'All'
@@ -69,13 +72,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'priority' => [
                 'attribute' => 'priority',
-                'filter' => [0=>'Low', 1=>'Medium', 2=>'High'],
+                'filter' => [Priority::LOW => Priority::get(Priority::LOW), Priority::MEDIUM =>Priority::get(Priority::MEDIUM), Priority::HIGH =>Priority::get(Priority::HIGH)],
                 'filterInputOptions' => [
                     'class' => 'form-control',         
                     'prompt' => 'All'
                 ],
                 'value'=> function ($model, $key, $index, $column){
-                    return $model->getPrio($model->priority);
+                    return Priority::get($model->priority);
                 },
                 'vAlign' => 'middle',
                 'hAlign' => 'center',
