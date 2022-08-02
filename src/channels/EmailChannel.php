@@ -55,7 +55,7 @@ class EmailChannel extends Channel
     protected function composeMessage($notification)
     {
         $this->mailer->getView()->params['language'] = $notification->language;
-        $message = $this->mailer->compose('@vendor/webzop/yii2-notifications/src/views/default/mail', [
+        $message = $this->mailer->compose('@vendor/webzop/yii2-notifications/src/views/notification/mail', [
             'content' => (string)$notification->getDescription(),
             'language' => $notification->language,
         ]);

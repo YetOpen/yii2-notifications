@@ -287,7 +287,14 @@ So you can call the Notifications widget in your app layout to show generated no
 
 </div>
 ```
+### Notifications Proprities
 
+- **Type**: name  of the type associated to the notification;
+- **Message**: message of the notification;
+- **Create At**: date of the creation of the notification;
+- **Time Ago**: time since creation;
+- **Read**: possibility mark the  notification as read or unread;
+- **Managed**: possibility mark the notification as managed or unmanaged only if the type associated type has the proprity 'check_management' TRUE.
 
 ### Web Push Notification Channel
 

@@ -2,7 +2,9 @@
 
 namespace webzop\notifications\controllers;
 
-use webzop\notifications\model\Notifications;
+use yii;
+use webzop\notifications\model\Notifications as NotificationModel;
+use webzop\notifications\widgets\Notifications;
 use webzop\notifications\model\NotificationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -97,10 +99,77 @@ class NotificationController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Notifications::findOne(['id' => $id])) !== null) {
+        if (($model = NotificationModel::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionNote(){
+        return $this->render('note');
+    }
+
+    public function actionCount()
+    {
+        $count = Notifications::getCountUnseen();
+        $this->ajaxResponse(['count' => $count]);
+    }
+
+    public function actionRead($id)
+    {
+        Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['read' => true], ['id' => $id])->execute();
+
+        if(Yii::$app->getRequest()->getIsAjax()){
+            return $this->ajaxResponse(1);
+        }
+
+        return Yii::$app->getResponse()->redirect(['/notifications/notification/index']);
+    }
+
+    public function actionReadAll()
+    {
+        Yii::$app->getDb()->createCommand()->update(
+            '{{%notifications}}',
+            ['read' => true, 'seen' => true],
+            ['user_id' => Yii::$app->user->id]
+            )->execute();
+        if(Yii::$app->getRequest()->getIsAjax()){
+            return $this->ajaxResponse(1);
+        }
+
+        Yii::$app->getSession()->setFlash('success', Yii::t('modules/notifications', 'All notifications have been marked as read.'));
+
+        return Yii::$app->getResponse()->redirect(['/notifications/notification/index']);
+    }
+
+    public function actionDeleteAll()
+    {
+        Yii::$app->getDb()->createCommand()->delete('{{%notifications}}')->execute();
+
+        if(Yii::$app->getRequest()->getIsAjax()){
+            return $this->ajaxResponse(1);
+        }
+
+        Yii::$app->getSession()->setFlash('success', Yii::t('modules/notifications', 'All notifications have been deleted.'));
+
+        return Yii::$app->getResponse()->redirect(['/notifications/notification/index']);
+    }
+
+    public function ajaxResponse($data = [])
+    {
+        if(is_string($data)){
+            $data = ['html' => $data];
+        }
+
+        $session = \Yii::$app->getSession();
+        $flashes = $session->getAllFlashes(true);
+        foreach ($flashes as $type => $message) {
+            $data['notifications'][] = [
+                'type' => $type,
+                'message' => $message,
+            ];
+        }
+        return $this->asJson($data);
     }
 }

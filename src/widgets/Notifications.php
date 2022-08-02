@@ -7,14 +7,11 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Json;
-use yii\db\Query;
 use webzop\notifications\NotificationsAsset;
 use webzop\notifications\model\Notifications as NotificationModel;
 
-
 class Notifications extends \yii\base\Widget
 {
-
     public $options = ['class' => 'dropdown nav-notifications'];
 
     /**
@@ -95,7 +92,7 @@ class Notifications extends \yii\base\Widget
         $html .= Html::tag('div', Html::tag('span', Yii::t('modules/notifications', 'There are no notifications to show'), ['style' => 'display: none;']), ['class' => 'empty-row']);
         $html .= Html::endTag('div');
 
-        $footer = Html::a(Yii::t('modules/notifications', 'View all'), ['/notifications/default/index']);
+        $footer = Html::a(Yii::t('modules/notifications', 'View all'), ['/notifications/notification/index']);
         $html .= Html::tag('div', $footer, ['class' => 'footer']);
         $html .= Html::endTag('div');
         $html .= Html::endTag('li');
@@ -110,10 +107,10 @@ class Notifications extends \yii\base\Widget
     {
         $this->clientOptions = array_merge([
             'id' => $this->options['id'],
-            'url' => Url::to(['/notifications/default/list']),
-            'countUrl' => Url::to(['/notifications/default/count']),
-            'readUrl' => Url::to(['/notifications/default/read']),
-            'readAllUrl' => Url::to(['/notifications/default/read-all']),
+            'url' => Url::to(['/notifications/notification/list']),
+            'countUrl' => Url::to(['/notifications/notification/count']),
+            'readUrl' => Url::to(['/notifications/notification/read']),
+            'readAllUrl' => Url::to(['/notifications/notification/read-all']),
             'xhrTimeout' => Html::encode($this->xhrTimeout),
             'pollInterval' => Html::encode($this->pollInterval),
         ], $this->clientOptions);
