@@ -21,7 +21,6 @@ class m010101_100001_init_notifications extends Migration
         // notifications
         $this->createTable('{{%notifications}}', [
             'id' => $this->primaryKey(),
-            'type' => $this->string(32)->notNull(),
             'class' => $this->integer()->notNull(),
             'key' => $this->string(32)->notNull(),
             'message' => $this->string(255)->notNull(),
@@ -30,14 +29,11 @@ class m010101_100001_init_notifications extends Migration
             'read' => $this->boolean()->notNull()->defaultValue(false),
             'user_id' => $this->integer(11)->unsigned()->notNull()->defaultValue(0),
             'created_at' => $this->integer(11)->unsigned()->notNull()->defaultValue(0),
-            'manged' => $this->boolean()->notNull()->defaultValue(false),
         ], $tableOptions);
         $this->createIndex('index_2', '{{%notifications}}', ['user_id']);
         $this->createIndex('index_3', '{{%notifications}}', ['created_at']);
         $this->createIndex('index_4', '{{%notifications}}', ['seen']);
-        $this->createIndex('index_5', '{{%notifications}}', ['type']);
-
-        $this->addForeignKey('fk-notifications-type', 'notifications', 'type', 'notifications_type', 'id', 'RESTRIC', 'RESTRIC');
+        
     }
 
     /**
