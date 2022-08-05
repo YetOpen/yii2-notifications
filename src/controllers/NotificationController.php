@@ -10,6 +10,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
+use yii\helpers\Url;
+use webzop\notifications\helpers\TimeElapsed;
 
 /**
  * NotificationController implements the CRUD actions for Notifications model.
@@ -104,6 +106,40 @@ class NotificationController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionList()
+    {
+        $userId = Yii::$app->getUser()->getId();
+        $list = NotificationModel::find()
+            ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId])
+            ->andWhere(['<=', 'send_at', date('Y-m-d H:i:s')])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(10)
+            ->asArray()
+            ->all();
+        $notifs = $this->prepareNotifications($list);
+        $this->ajaxResponse(['list' => $notifs]);
+    }
+
+    private function prepareNotifications($list){
+        $notifs = [];
+        $seen = [];
+        foreach($list as $notif){
+            if(!$notif['seen']){
+                $seen[] = $notif['id'];
+            }
+            $route = @unserialize($notif['route']);
+            $notif['url'] = !empty($route) ? Url::to($route) : '';
+            $notif['timeago'] = TimeElapsed::timeElapsed($notif['created_at']);
+            $notifs[] = $notif;
+        }
+
+        if(!empty($seen)){
+            Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['seen' => true], ['id' => $seen])->execute();
+        }
+
+        return $notifs;
     }
 
     public function actionNote(){

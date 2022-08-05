@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use \kartik\grid\GridView;
-use kartik\icons\Icon;
 use webzop\notifications\dictionaries\Priority;
 use webzop\notifications\dictionaries\Manageable;
 
@@ -15,7 +14,6 @@ use webzop\notifications\dictionaries\Manageable;
 
 $this->title = Yii::t('modules/notifications', 'Notification Types');
 $this->params['breadcrumbs'][] = $this->title;
-Icon::map($this, Icon::FA);
 ?>
 
 <div class="notification-type-index">
