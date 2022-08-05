@@ -22,7 +22,7 @@ class NotificationSearch extends Notifications
     public function rules()
     {
         return [
-            [['id', 'seen','read', 'user_id', 'sent', 'created_at', 'managed'], 'integer'],
+            [['id', 'seen', 'read', 'user_id', 'sent', 'created_at', 'managed'], 'integer'],
             [['class', 'type', 'seen', 'key', 'channel', 'message', 'content', 'attachments', 'language', 'route', 'send_at', 'managed', 'created_at_filter'], 'safe'],
         ];
     }
@@ -46,7 +46,7 @@ class NotificationSearch extends Notifications
     public function search($params)
     {
         $query = Notifications::find();
-        $query -> joinWith('notificationsType');
+        $query -> joinWith('notificationType');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
