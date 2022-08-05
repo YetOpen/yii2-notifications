@@ -21,7 +21,7 @@ class NotificationType extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%notifications_type}}';
+        return '{{%notification_type}}';
     }
 
     /**
