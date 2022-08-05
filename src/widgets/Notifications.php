@@ -130,6 +130,7 @@ class Notifications extends \yii\base\Widget
             ->andWhere(['<=', 'send_at', date('Y-m-d H:i:s')])
             ->andWhere(['seen' => false])
             ->count();
+
         return $count;
     }
 
