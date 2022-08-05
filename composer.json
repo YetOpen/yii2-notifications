@@ -23,7 +23,8 @@
         "yiisoft/yii2": "~2.0.13",
         "minishlink/web-push": "^6.0",
         "yetopen/yii2-sms-sender-interface": "*",
-        "yiisoft/yii2-queue": "^2.3"
+        "yiisoft/yii2-queue": "^2.3",
+        "kartik-v/yii2-icons": "*"
     },
     "autoload": {
         "psr-4": {
