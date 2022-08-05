@@ -167,7 +167,7 @@ class Notifications extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getNotificationsType()
+    public function getNotificationType()
     {
         return $this->hasOne(NotificationType::class, ['id' => 'type']);
     }

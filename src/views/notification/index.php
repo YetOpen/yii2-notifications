@@ -36,17 +36,17 @@ Icon::map($this, Icon::FA);
                     'prompt' => 'All'
                 ],
                 'value' => function ($model, $key, $index, $column){
-                    return $model->notificationsType->name;
+                    return $model->notificationType->name;
                 },
                 'contentOptions' => function ($model, $key, $index, $column) {
-                    return ['style' => 'background-color:'.($model->notificationsType->color)];
+                    return ['style' => 'background-color:'.($model->notificationType->color)];
                 },               
                 'vAlign' => 'middle',
                 'hAlign' => 'center',
                 'width'=>'170px',
             ],
             'message' => [
-                'label' => 'message',
+                'label' => 'Message',
                 'attribute' => 'message',
                 'hAlign' => 'center',
                 'width'=>'200px',
@@ -103,7 +103,7 @@ Icon::map($this, Icon::FA);
                 'attribute'=>'managed', 
                 'class' => 'kartik\grid\BooleanColumn',
                 'class' => 'kartik\grid\EditableColumn',
-                'filter' => [0 => 'Unmanaged', 1 => 'Managed'],
+                'filter' => [Managed::UNMANAGED => Managed::get(Managed::UNMANAGED), Managed::MANAGED  => Managed::get(Managed::MANAGED)],
                 'filterInputOptions' => [
                     'class' => 'form-control',         
                     'prompt' => 'All'
@@ -111,7 +111,7 @@ Icon::map($this, Icon::FA);
                 
                 'editableOptions'=> function($model, $key, $index, $column){
                 
-                    if(($model->notificationsType->check_management) == 0){
+                    if(($model->notificationType->check_management) == 0){
                         return [
                             'editableButtonOptions' => ['disabled' => true,],
                             'asPopover' => true,
@@ -126,7 +126,7 @@ Icon::map($this, Icon::FA);
                         ];
                     }
 
-                    if(($model->notificationsType->check_management) == 1){
+                    if(($model->notificationType->check_management) == 1){
                         return [
                             'editableButtonOptions' => ['disabled' => false,],
                             'asPopover' => true,
