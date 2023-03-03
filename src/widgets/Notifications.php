@@ -130,7 +130,7 @@ class Notifications extends \yii\base\Widget
         $userId = Yii::$app->getUser()->getId();
         $count = NotificationModel::find()
             ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId])
-            ->andWhere(['<=', 'sent_at', date('Y-m-d H:i:s')])
+            ->andWhere(['<=', 'send_at', date('Y-m-d H:i:s')])
             ->andWhere(['seen' => false])
             ->count();
         return $count;
