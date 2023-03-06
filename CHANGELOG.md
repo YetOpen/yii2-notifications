@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## UNRELEASED
+- fixed asset bundle `src`
+
 ## 0.3.4 May 17, 2023
 
 - Fixed default alias in `Module::$attachmentsPath`
