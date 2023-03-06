@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## UNRELEASED
+
+- fixed asset bundle `src`
+
 ## 0.3.2 November 9, 2021
 
 - Fixed caching of channels in worker;
