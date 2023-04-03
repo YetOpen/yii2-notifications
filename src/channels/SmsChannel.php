@@ -41,19 +41,17 @@ class SmsChannel extends Channel
      */
     public function sendNotification($notification)
     {
-        if(empty($this->message['to'])){
-            $this->message['to'] = $this->getMessageTo($notification);
+        $to = empty($this->message['to']) ? $this->getMessageTo($notification) : $this->message['to'];
+        if(!is_array($to)) {
+            $to = [$to];
         }
-        if(!is_array($this->message['to'])) {
-            $this->message['to'] = [$this->message['to']];
-        }
-        Yii::debug('Sending SMS to '.implode(', ', $this->message['to']), __METHOD__);
+        Yii::debug('Sending SMS to '.implode(', ', $to), __METHOD__);
 
         // Text messages have a maximum length if it's exceeded it will be sent split into multiple sms
         $maxLength = $this->sender->maxTextLength;
         foreach (str_split((string)$notification->description, $maxLength) as $text) {
             $send = $this->sender->send(
-                $this->message['to'],
+                $to,
                 $text
             );
             if(!$send) {

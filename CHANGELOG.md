@@ -1,15 +1,17 @@
 # CHANGELOG
 
-## UNRELEASED
+## 0.3.3 April 3, 2023
 
-- fixed asset bundle `src`
-
-## 0.3.2 November 9, 2021
+- Fixed receiver on the channel when multiple notifications are sent;
+- Fixed `NotificationsAsset::$sourcePath`.
+- Fixed typos.
+ 
+## 0.3.2 May 19, 2022
 
 - Fixed caching of channels in worker;
 - Commands controller no longer extends [yii\queue\cli\Command] since its methods are no longer required and keeping it
   caused some errors;
-- Fixed an errore that prevented the worker to set correctly the language of the notifications.
+- Fixed an error that prevented the worker to set correctly the language of the notifications.
 
 ## 0.3.1 November 9, 2021
 
