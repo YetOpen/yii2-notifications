@@ -20,7 +20,7 @@ class Module extends \yii\base\Module
 
     public $controllerNamespace = 'webzop\notifications\controllers';
 
-    public $attachmentsPath = '@root/documents/notifications';
+    public $attachmentsPath = '@app/documents/notifications';
 
     public $identityClass;
 
@@ -32,7 +32,7 @@ class Module extends \yii\base\Module
     public function init()
     {
         if($this->attachmentsPath && !file_exists(Yii::getAlias($this->attachmentsPath))) {;
-            mkdir(Yii::getAlias($this->attachmentsPath), 0775);
+            mkdir(Yii::getAlias($this->attachmentsPath), 0775, true);
         }
         if($this->mutex) {
             $this->mutex = Instance::ensure($this->mutex, Mutex::class);
