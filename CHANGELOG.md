@@ -1,4 +1,6 @@
 # CHANGELOG
+## DEV
+- fix wrong alias
 
 ## 0.3.3 April 3, 2023
 
