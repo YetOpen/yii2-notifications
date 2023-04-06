@@ -157,7 +157,7 @@ class WebChannel extends Channel
         // send all the notifications with payload
         foreach ($subscriptions as $subscription) {
 
-            $webPush->sendNotification(
+            $webPush->sendOneNotification(
                 $subscription,
                 json_encode(
                     $payload
