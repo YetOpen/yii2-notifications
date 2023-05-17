@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## DEV
+## 0.3.4 May 17, 2023
 
 - Fixed default alias in `Module::$attachmentsPath`
 - Fixed name of method after library update in `WebChannel`
