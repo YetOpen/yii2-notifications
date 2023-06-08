@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m010101_100001_init_notifications
  */
-class m010101_100001_add_type_column_add_managed_column_to_notifications_table extends Migration
+class m220626175153_add_type_column_add_managed_column_to_notifications_table extends Migration
 {
     /**
      * Create table `notifications`
