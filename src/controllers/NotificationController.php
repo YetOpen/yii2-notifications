@@ -113,7 +113,10 @@ class NotificationController extends Controller
         $userId = Yii::$app->getUser()->getId();
         $list = NotificationModel::find()
             ->andWhere(['or', 'user_id = 0', 'user_id = :user_id'], [':user_id' => $userId])
-            ->andWhere(['<=', 'send_at', date('Y-m-d H:i:s')])
+            ->andWhere(['or',
+                ['<=', 'send_at', date('Y-m-d H:i:s')],
+                ['send_at' => NULL]
+            ])
             ->orderBy(['id' => SORT_DESC])
             ->limit(10)
             ->asArray()
