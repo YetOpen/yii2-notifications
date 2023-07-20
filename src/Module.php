@@ -27,8 +27,13 @@ class Module extends \yii\base\Module
     public $identityClass;
 
     public $mutex;
-    //var to indicate if the user is blocked
-    public $isBlocked = true;
+
+    /**
+     * if the user is blocked not send a notification
+     *
+     * @var boolean true | false if the not send a notificaiton
+     */
+    public $sendToBlockedUsers = false;
 
     /**
      * {@inheritdoc}
@@ -54,73 +59,69 @@ class Module extends \yii\base\Module
      */
     public function send($notification, array $channels = null){
         // If user is blocked do not send the notification
-        $userId = (Yii::$app->user->identityClass::findOne(Yii::$app->request->get('id')));
+        $userId = (Yii::$app->user->identityClass::findOne($notification->userId));
         
         // if the user is blocked send a message error and return false
-        if(!empty($userId->blocked_at)){
-            //warning
-            Yii::warning('The current user is blocked','profiling');
-            return false;
-
-        }else if(!empty($userId->confirmed_at)){
-            Yii::error([
-                'msg' => 'The current user not exist'
-            ],'profiling');
-            return false;
-        }
-        else{
-            $this->isBlocked = false;
-        }
-        if($this->isBlocked == false)
-        {
-            if($channels === null){
-                $channels = array_keys($this->channels);
-            }
-
-            foreach ((array)$channels as $channelId) {
-                $channel = $this->getChannel($channelId);
-                if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
-                    continue;
-                }
-                $model = new Notifications([
-                    'notification' => $notification,
-                    'channel' => $channelId,
-                ]);
-                if(!$model->save()) {
-                    Yii::error('Cannot save notifications: '.VarDumper::dumpAsString($model->errors), __METHOD__);
-                    return FALSE;
-                }
-
-                // The notification has to be sent in the future
-                if($notification->sendAt > date('Y-m-d H:i:s')) {
-                    continue;
-                }
-
-                $handle = 'to'.ucfirst($channelId);
-                try {
-                    if($notification->hasMethod($handle)){
-                        $success = call_user_func([clone $notification, $handle], $channel);
-                    }
-                    else {
-                        $success = $channel->send(clone $notification);
-                    }
-                    // Notification was successfully sent with this channel it can be set in the database
-                    // using updateAttributes since validation errors could cause the notification to be sent continuously.
-                    if($success) {
-                        $model->updateAttributes(['sent' => true]);
-                    }
-                } catch (\Exception $e) {
-                    if (YII_DEBUG) {
-                        throw $e;
-                    }
-                    Yii::warning("Notification sent by channel '$channelId' has failed: " . $e->getMessage(), __METHOD__);
-                    Yii::warning($e, __METHOD__);
-                }
+        if(!$this->sendToBlockedUsers){
+            if(!empty($userId->isBlocked)) {
+                //warning
+                Yii::warning('The current user is blocked','profiling');
+                return false;
+        // if the user is NOT confirmed send a message error and return false
+            } else if(!empty($userId->isConfirmed)) {
+                Yii::error([
+                    'msg' => 'The current user not exist'
+                ],'profiling');
+                return false;
             }
         }
+        
+        if($channels === null){
+            $channels = array_keys($this->channels);
+        }
+
+        foreach ((array)$channels as $channelId) {
+            $channel = $this->getChannel($channelId);
+            if(!$notification->shouldSend($channel) || !$channel->shouldSend($notification)){
+                continue;
+            }
+            $model = new Notifications([
+                'notification' => $notification,
+                'channel' => $channelId,
+            ]);
+            if(!$model->save()) {
+                Yii::error('Cannot save notifications: '.VarDumper::dumpAsString($model->errors), __METHOD__);
+                return FALSE;
+            }
+
+            // The notification has to be sent in the future
+            if($notification->sendAt > date('Y-m-d H:i:s')) {
+                continue;
+            }
+
+            $handle = 'to'.ucfirst($channelId);
+            try {
+                if($notification->hasMethod($handle)){
+                    $success = call_user_func([clone $notification, $handle], $channel);
+                }
+                else {
+                    $success = $channel->send(clone $notification);
+                }
+                // Notification was successfully sent with this channel it can be set in the database
+                // using updateAttributes since validation errors could cause the notification to be sent continuously.
+                if($success) {
+                    $model->updateAttributes(['sent' => true]);
+                }
+            } catch (\Exception $e) {
+                if (YII_DEBUG) {
+                    throw $e;
+                }
+                Yii::warning("Notification sent by channel '$channelId' has failed: " . $e->getMessage(), __METHOD__);
+                Yii::warning($e, __METHOD__);
+            }
         return TRUE;
+        }
     }
-
     /**
      * Gets the channel instance
      *

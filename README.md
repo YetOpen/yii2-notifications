@@ -44,6 +44,7 @@ Notifications is often used as an application module and configured in the appli
     'modules' => [
         'notifications' => [
             'class' => 'webzop\notifications\Module',
+            'sendToBlockedUsers' => false //set TRUE if want send a notification also the user is blocked
             'channels' => [
                 'screen' => [
                     'class' => 'webzop\notifications\channels\ScreenChannel',
