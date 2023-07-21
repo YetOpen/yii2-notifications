@@ -29,9 +29,9 @@ class Module extends \yii\base\Module
     public $mutex;
 
     /**
-     * if the user is blocked not send a notification
+     * When set to `false`, if the user is blocked, prevents the sending of the notifications
      *
-     * @var boolean true | false if the not send a notificaiton
+     * @var boolean
      */
     public $sendToBlockedUsers = false;
 
@@ -58,20 +58,27 @@ class Module extends \yii\base\Module
      * @return bool If the sending was successful or not.
      */
     public function send($notification, array $channels = null){
-        // If user is blocked do not send the notification
-        $userId = (Yii::$app->user->identityClass::findOne($notification->userId));
+        /** @var \Da\User\Model\User $user */
+        $user = (Yii::$app->user->identityClass::findOne($notification->userId));
         
-        // if the user is blocked send a message error and return false
+        // If required, we need to check if the user is active
         if(!$this->sendToBlockedUsers){
-            if(!empty($userId->isBlocked)) {
+            // If user is blocked do not send the notification
+            if($user->isBlocked) {
                 //warning
-                Yii::warning('The current user is blocked','profiling');
-                return false;
-        // if the user is NOT confirmed send a message error and return false
-            } else if(!empty($userId->isConfirmed)) {
                 Yii::error([
-                    'msg' => 'The current user not exist'
-                ],'profiling');
+                    'msg' => 'Tried to send a notification to a blocked user',
+                    'user' => $user->toArray(),
+                    'notification' => $notification->toArray(),
+                ], __METHOD__);
+                return false;
+            // same if it's yet to be confirmed
+            } else if($user->isConfirmed) {
+                Yii::warning([
+                    'msg' => 'Tried to send a notification to user still not confirmed',
+                    'user' => $user->toArray(),
+                    'notification' => $notification->toArray(),
+                ], __METHOD__);
                 return false;
             }
         }
