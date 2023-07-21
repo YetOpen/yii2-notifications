@@ -126,9 +126,10 @@ class Module extends \yii\base\Module
                 Yii::warning("Notification sent by channel '$channelId' has failed: " . $e->getMessage(), __METHOD__);
                 Yii::warning($e, __METHOD__);
             }
-        return TRUE;
         }
+        return TRUE;
     }
+
     /**
      * Gets the channel instance
      *
