@@ -10,6 +10,8 @@ use yii\base\BootstrapInterface;
 use yii\di\Instance;
 use yii\helpers\VarDumper;
 use yii\mutex\Mutex;
+use yii\web\User;
+
 
 class Module extends \yii\base\Module
 {
@@ -25,6 +27,13 @@ class Module extends \yii\base\Module
     public $identityClass;
 
     public $mutex;
+
+    /**
+     * When set to `false`, if the user is blocked, prevents the sending of the notifications
+     *
+     * @var boolean
+     */
+    public $sendToBlockedUsers = false;
 
     /**
      * {@inheritdoc}
@@ -49,6 +58,31 @@ class Module extends \yii\base\Module
      * @return bool If the sending was successful or not.
      */
     public function send($notification, array $channels = null){
+        /** @var \Da\User\Model\User $user */
+        $user = (Yii::$app->user->identityClass::findOne($notification->userId));
+        
+        // If required, we need to check if the user is active
+        if(!$this->sendToBlockedUsers){
+            // If user is blocked do not send the notification
+            if($user->isBlocked) {
+                //warning
+                Yii::error([
+                    'msg' => 'Tried to send a notification to a blocked user',
+                    'user' => $user->toArray(),
+                    'notification' => $notification->toArray(),
+                ], __METHOD__);
+                return false;
+            // same if it's yet to be confirmed
+            } else if($user->isConfirmed) {
+                Yii::warning([
+                    'msg' => 'Tried to send a notification to user still not confirmed',
+                    'user' => $user->toArray(),
+                    'notification' => $notification->toArray(),
+                ], __METHOD__);
+                return false;
+            }
+        }
+        
         if($channels === null){
             $channels = array_keys($this->channels);
         }

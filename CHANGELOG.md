@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.5 Jul 21, 2023
+
+- Added parameter to prevent sending of notifications to non-active users (blocked or not confirmed). 
+
 ## 0.3.4 May 17, 2023
 
 - Fixed default alias in `Module::$attachmentsPath`

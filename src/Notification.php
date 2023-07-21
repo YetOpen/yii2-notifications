@@ -4,6 +4,7 @@ namespace webzop\notifications;
 
 use webzop\notifications\model\Notifications;
 use Yii;
+use yii\base\ArrayableTrait;
 use yii\base\InvalidConfigException;
 
 /**
@@ -15,6 +16,8 @@ use yii\base\InvalidConfigException;
  */
 class Notification extends \yii\base\BaseObject
 {
+    use ArrayableTrait;
+
     public $key;
 
     public $userId = 0;
