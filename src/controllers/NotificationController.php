@@ -49,36 +49,41 @@ class NotificationController extends Controller
         {
             $id =\Yii::$app->request->post('editableKey');  
             $model  = $this->findModel($id);
-           
+            //init values
             $out = Json::encode(['output'=>'', 'message'=>'']);          
             $post = [];
-            $posted = current(\Yii::$app->request->post('Notifications'));  //model
-            $post['Notifications'] = $posted;
+            $posted = current(\Yii::$app->request->post('Notifications'));  //model 
+            $post['Notifications'] = $posted;   //model type $post['Notifications']['read' | 'managed']
+            
             if ($model->load($post) ) {
                 $model->save();
                 $output = '';
+                //if the "read" option is selected
                 if (isset($posted['read']))
                 {
                     $output = $posted['read'];
+                    //Save a new value into the notifications database.
                     \Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['read' => $output], ['id' => $id])->execute();
                 }
+                //if the "managed" option is selected
                 else if(isset($posted['managed']))
-                {
+                {   
                     $output = $posted['managed'];
+                    //Save a new value into the notifications database.
                     \Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['managed' => $output], ['id' => $id])->execute();
 
                 }
+                //encode the output
                 $out = Json::encode(['output'=>$output, 'message'=>'']);
             }
          // return JSON encoded output in the below format
           return $out;
         }
-
+        //render to index page
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-
     }
 
     /**
