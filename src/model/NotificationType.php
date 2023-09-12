@@ -53,4 +53,19 @@ class NotificationType extends \yii\db\ActiveRecord
             'priority' => Yii::t('modules/notifications', 'Priority'),
         ];
     }
+    /**
+     * Undocumented function
+     *
+     * @return \yii\db\ActiveRecord  Name list of notificationType 
+     */
+    static function getAllName()
+    {
+        
+        $notifications = NotificationType::find();
+
+        $notifications->select('name')
+                            ->indexBy('id');;
+
+        return $notifications;
+    }
 }

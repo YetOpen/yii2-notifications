@@ -45,31 +45,33 @@ class NotificationController extends Controller
     {
         $searchModel = new NotificationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
         if (\Yii::$app->request->post('hasEditable'))
         {
-            $id =\Yii::$app->request->post('editableKey');          
+            $id =\Yii::$app->request->post('editableKey');  
             $model  = $this->findModel($id);
            
             $out = Json::encode(['output'=>'', 'message'=>'']);          
             $post = [];
-
             $posted = current(\Yii::$app->request->post('Notifications'));  //model
             $post['Notifications'] = $posted;
-       
-            if ($model->load($post)) {
+            if ($model->load($post) ) {
                 $model->save();
-
                 $output = '';
-                if (isset($posted['editableAttribute'])){
-                    $output = $model->editableAttribute;
-                    $out = Json::encode(['output'=>$output, 'message'=>'']);
+                if (isset($posted['read']))
+                {
+                    $output = $posted['read'];
+                    \Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['read' => $output], ['id' => $id])->execute();
                 }
+                else if(isset($posted['managed']))
+                {
+                    $output = $posted['managed'];
+                    \Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['managed' => $output], ['id' => $id])->execute();
+
+                }
+                $out = Json::encode(['output'=>$output, 'message'=>'']);
             }
-                 
          // return JSON encoded output in the below format
-          echo $out;
-          return;
+          return $out;
         }
 
         return $this->render('index', [
