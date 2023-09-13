@@ -80,9 +80,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'prompt' => 'All'
                 ],
                 'editableOptions'=> [
-                    'asPopover' => true,
-                    'format' => Editable::FORMAT_BUTTON,
-                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                    'asPopover' => false,
+                    'format' => 'checkbox',
+                    'inputType' => Editable::INPUT_CHECKBOX_X,
                     'data' => [Read::UNREAD => Read::get(Read::UNREAD), Read::READ  => Read::get(Read::READ)],
                     'options' => ['class'=>'form-control'],
                     'displayValueConfig'=> [
