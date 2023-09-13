@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                  'disabled' => $editableButtonOption
                             ], 
                             'asPopover' => false,
-                            'format' => Editable::FORMAT_BUTTON,
+                            'format' => 'checkbox',
                             'inputType' => Editable::INPUT_CHECKBOX_X,
                             'data' => [Managed::UNMANAGED => Managed::get(Managed::UNMANAGED), Managed::MANAGED  => Managed::get(Managed::MANAGED)],
                             'options' => ['class'=>'form-control'], 
