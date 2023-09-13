@@ -65,7 +65,7 @@ class NotificationController extends Controller
                     //if the notification is 'not set'  
                     if($output == '')
                     {
-                        $output = 0;
+                        $output = 1;
                     }
                     //Save a new value into the notifications database.
                     \Yii::$app->getDb()->createCommand()->update('{{%notifications}}', ['read' => $output], ['id' => $id])->execute();
