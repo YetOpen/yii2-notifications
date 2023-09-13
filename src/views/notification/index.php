@@ -7,6 +7,7 @@ use kartik\grid\GridView;
 Use kartik\editable\Editable;
 use webzop\notifications\model\NotificationType;
 use kartik\daterange\DateRangePicker;
+use PHPUnit\Util\Log\JSON;
 use webzop\notifications\dictionaries\Read;
 use webzop\notifications\dictionaries\Managed;
 
@@ -14,10 +15,10 @@ use webzop\notifications\dictionaries\Managed;
 /* @var $searchModel webzop\notifications\model\NotificationSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$this->title = 'notifiche';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="notifications-index">
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php \yii\widgets\Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -139,3 +140,4 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
+
