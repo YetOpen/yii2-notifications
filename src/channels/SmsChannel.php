@@ -2,12 +2,11 @@
 
 namespace webzop\notifications\channels;
 
+use webzop\notifications\Channel;
 use webzop\notifications\model\UserChannels;
-use webzop\notifications\Notification;
 use yetopen\smssender\SmsSenderInterface;
 use Yii;
 use yii\base\InvalidConfigException;
-use webzop\notifications\Channel;
 use yii\di\Instance;
 
 class SmsChannel extends Channel
@@ -42,7 +41,7 @@ class SmsChannel extends Channel
     public function sendNotification($notification)
     {
         $to = empty($this->message['to']) ? $this->getMessageTo($notification) : $this->message['to'];
-        if(!is_array($to)) {
+        if (!is_array($to)) {
             $to = [$to];
         }
         Yii::debug('Sending SMS to '.implode(', ', $to), __METHOD__);
@@ -54,7 +53,7 @@ class SmsChannel extends Channel
                 $to,
                 $text
             );
-            if(!$send) {
+            if (!$send) {
                 return false;
             }
         }
@@ -71,7 +70,7 @@ class SmsChannel extends Channel
     {
         // Checking if set as a user notification channel
         $userChannel = UserChannels::findByChannel($notification->userId, $this->id);
-        if($userChannel && $userChannel->active) {
+        if ($userChannel && $userChannel->active) {
             return $userChannel->receiver;
         }
         throw new InvalidConfigException('The "to" option must be set in SmsChannel::message.');

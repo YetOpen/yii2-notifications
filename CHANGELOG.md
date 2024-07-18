@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.3.6 Jul 18, 2024
+
+- CS fixes
+- Fixed notification not sent even if the user was confirmed
+- Improved attachments handling to email notifications.
+
 ## 0.3.5 Jul 21, 2023
 
 - Added parameter to prevent sending of notifications to non-active users (blocked or not confirmed). 

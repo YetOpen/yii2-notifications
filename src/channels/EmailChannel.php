@@ -2,14 +2,14 @@
 
 namespace webzop\notifications\channels;
 
+use webzop\notifications\Channel;
 use webzop\notifications\model\UserChannels;
 use webzop\notifications\Module;
+use webzop\notifications\Notification;
 use yetopen\helpers\ArrayHelper;
 use Yii;
-use yii\di\Instance;
 use yii\base\InvalidConfigException;
-use webzop\notifications\Channel;
-use webzop\notifications\Notification;
+use yii\di\Instance;
 
 class EmailChannel extends Channel
 {
@@ -60,7 +60,7 @@ class EmailChannel extends Channel
             'language' => $notification->language,
         ]);
         Yii::configure($message, $this->message);
-        if(empty($message->getTo())){
+        if (empty($message->getTo())) {
             $message->setTo($this->getEmailTo($notification));
         }
         Yii::debug("Sending email to ".implode(', ', array_keys($message->getTo())), __METHOD__);
@@ -76,7 +76,7 @@ class EmailChannel extends Channel
 
     /**
      * Gets the email for the user of the given notification.
-     * @param $notification
+     * @param Notification $notification
      * @return mixed
      * @throws InvalidConfigException
      */
@@ -84,11 +84,11 @@ class EmailChannel extends Channel
     {
         // Checking if set as a user notification channel
         $userChannel = UserChannels::findByChannel($notification->userId, $this->id);
-        if($userChannel && $userChannel->active) {
+        if ($userChannel && $userChannel->active) {
             return $userChannel->receiver;
         }
         // Checking in case it's available directly on the user
-        if(
+        if (
             ($user = Module::getInstance()->identityClass::findOne($notification->userId)) &&
             ($email = ArrayHelper::getValue($user, 'email'))
         ) {

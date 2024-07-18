@@ -6,6 +6,7 @@ use webzop\notifications\model\Notifications;
 use Yii;
 use yii\base\ArrayableTrait;
 use yii\base\InvalidConfigException;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the base class for a notification.
@@ -22,13 +23,13 @@ class Notification extends \yii\base\BaseObject
 
     public $userId = 0;
 
-    public $sendAt = NULL;
+    public $sendAt = null;
 
     public $title = '';
 
     public $description = '';
 
-    public $route = NULL;
+    public $route = null;
 
     public $attachments = [];
 
@@ -66,7 +67,7 @@ class Notification extends \yii\base\BaseObject
      * If FALSE, this control is disabled
      * @var string
      */
-    protected $renotification_time = FALSE;
+    protected $renotification_time = false;
 
     /**
      * Create an instance
@@ -76,9 +77,10 @@ class Notification extends \yii\base\BaseObject
      * @return static the newly created Notification
      * @throws \Exception
      */
-    public static function create($key, $params = []){
+    public static function create($key, $params = [])
+    {
         $params['key'] = $key;
-        return new static($params);
+        return Yii::createObject(ArrayHelper::merge(['class' => static::class], $params));
     }
 
     /**
@@ -93,7 +95,7 @@ class Notification extends \yii\base\BaseObject
         // If the re-notification time params is false we don't need to check the interval, the notification should
         // be sent only if it was set to be sent at the current time or before
         if (empty($this->renotification_time)) {
-            return TRUE;
+            return true;
         }
 
         // Workaround:
@@ -155,11 +157,12 @@ class Notification extends \yii\base\BaseObject
      *
      * @return array
      */
-    public function getAttachments(){
+    public function getAttachments()
+    {
         $attachments = [];
         foreach ($this->attachments as $attachment) {
             // The attachment was set as an array already parsed
-            if(!is_string($attachment)) {
+            if (!is_string($attachment)) {
                 $attachments[] = $attachment;
                 continue;
             }
@@ -178,7 +181,8 @@ class Notification extends \yii\base\BaseObject
      *
      * @return array|null
      */
-    public function getRoute(){
+    public function getRoute()
+    {
         return $this->route;
     }
 
@@ -187,7 +191,8 @@ class Notification extends \yii\base\BaseObject
      *
      * @return array
      */
-    public function getData(){
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -197,7 +202,8 @@ class Notification extends \yii\base\BaseObject
      * @param array $data
      * @return self
      */
-    public function setData($data = []){
+    public function setData($data = [])
+    {
         $this->data = $data;
         return $this;
     }
@@ -207,7 +213,8 @@ class Notification extends \yii\base\BaseObject
      *
      * @return string|null
      */
-    public function getTag(){
+    public function getTag()
+    {
         return $this->tag;
     }
 
@@ -217,7 +224,8 @@ class Notification extends \yii\base\BaseObject
      * @param string|null $tag
      * @return self
      */
-    public function setTag($tag = null){
+    public function setTag($tag = null)
+    {
         $this->tag = $tag;
         return $this;
     }
@@ -228,7 +236,8 @@ class Notification extends \yii\base\BaseObject
      * @param string $priority
      * @return self
      */
-    public function setPriority($priority){
+    public function setPriority($priority)
+    {
         $this->priority = $priority;
         return $this;
     }
@@ -238,8 +247,9 @@ class Notification extends \yii\base\BaseObject
      *
      * @return string
      */
-    public function getPriority(){
-        if($this->priority) {
+    public function getPriority()
+    {
+        if ($this->priority) {
             return $this->priority;
         }
         return Notification::PRIORITY_NORMAL;
@@ -251,7 +261,8 @@ class Notification extends \yii\base\BaseObject
      * @param string $ttl
      * @return self
      */
-    public function setTTL($ttl){
+    public function setTTL($ttl)
+    {
         $this->ttl = $ttl;
         return $this;
     }
@@ -261,8 +272,9 @@ class Notification extends \yii\base\BaseObject
      *
      * @return string
      */
-    public function getTTL(){
-        if($this->ttl) {
+    public function getTTL()
+    {
+        if ($this->ttl) {
             return $this->ttl;
         }
         return Notification::DEFAULT_TTL;
@@ -274,7 +286,8 @@ class Notification extends \yii\base\BaseObject
      *
      * @return int
      */
-    public function getUserId(){
+    public function getUserId()
+    {
         return $this->userId;
     }
 
@@ -284,7 +297,8 @@ class Notification extends \yii\base\BaseObject
      * @param int $id
      * @return self
      */
-    public function setUserId($id){
+    public function setUserId($id)
+    {
         $this->userId = $id;
         return $this;
     }
@@ -294,9 +308,10 @@ class Notification extends \yii\base\BaseObject
      *
      * @return bool If the sending of the notification was successful.
      */
-    public function send(){
+    public function send()
+    {
         $module = Yii::$app->getModule('notifications');
-        if(is_null($module)) {
+        if (is_null($module)) {
             throw new InvalidConfigException("Please set up the module in the web/console settings, see README for instructions");
         }
         return $module->send($this);

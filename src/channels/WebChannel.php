@@ -2,15 +2,13 @@
 
 namespace webzop\notifications\channels;
 
-use ErrorException;
 use Minishlink\WebPush\MessageSentReport;
+use Minishlink\WebPush\WebPush;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use webzop\notifications\Channel;
 use webzop\notifications\model\WebPushSubscription;
 use webzop\notifications\Notification;
-use Minishlink\WebPush\WebPush;
-
 
 /**
  * Class WebChannel
@@ -65,7 +63,8 @@ class WebChannel extends Channel
      * @param $id
      * @param array $config
      */
-    public function __construct($id, $config = []) {
+    public function __construct($id, $config = [])
+    {
         parent::__construct($id, $config);
         $this->setDefaultOptions();
         $this->setDefaultData();
@@ -74,18 +73,17 @@ class WebChannel extends Channel
     /**
      * setup default options
      */
-    public function setDefaultOptions() {
-
+    public function setDefaultOptions()
+    {
         $this->options = [
             //'TTL' => 300,                                   // defaults to 4 weeks (Time To Live in Seconds)
             'urgency' => Notification::PRIORITY_NORMAL,     // protocol defaults to "normal" (can be "very-low", "low", "normal", or "high")
             'batchSize' => 200,                             // defaults to 1000
         ];
-
     }
 
-    public function setDefaultData() {
-
+    public function setDefaultData()
+    {
         $this->data = [
             'requireInteraction' => true
 
@@ -109,23 +107,22 @@ class WebChannel extends Channel
 //            'badge' => '',
 
         ];
-
     }
 
 
     /**
      * {@inheritdoc}
      */
-    public function sendNotification($notification) {
-
-        if(!$this->enable) {
+    public function sendNotification($notification)
+    {
+        if (!$this->enable) {
             return false;
         }
 
         $user_id = $notification->getUserId();
         $subscriptions = WebPushSubscription::getUserSubscriptions($user_id);
 
-        if(!$subscriptions) {
+        if (!$subscriptions) {
             return false;
         }
 
@@ -145,18 +142,17 @@ class WebChannel extends Channel
             $notification->getData(),
             array(
                 'title' => $notification->getTitle(),
-                'body' => $notification->getDescription()
+                'body' => $notification->description ?: $notification->getDescription()
             )
         );
 
-        if($tag = $notification->getTag()) {
+        if ($tag = $notification->getTag()) {
             $payload['tag'] = $tag;
         }
 
 
         // send all the notifications with payload
         foreach ($subscriptions as $subscription) {
-
             $webPush->sendOneNotification(
                 $subscription,
                 json_encode(
@@ -195,23 +191,18 @@ class WebChannel extends Channel
                 /** @var bool $isTheEndpointWrongOrExpired */
                 $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
 
-                if($isTheEndpointWrongOrExpired) {
+                if ($isTheEndpointWrongOrExpired) {
 
                     // remove expired subscriptions
                     $subscriber = WebPushSubscription::findOne(['endpoint' => $endpoint]);
 
-                    if($subscriber) {
+                    if ($subscriber) {
                         $subscriber->delete();
                     }
-
-
                 }
-
             }
         }
 
         return $result;
-
     }
-
 }

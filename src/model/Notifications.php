@@ -5,6 +5,7 @@ namespace webzop\notifications\model;
 use webzop\notifications\Module;
 use webzop\notifications\Notification;
 use Yii;
+use yii\base\ErrorException;
 use yii\db\Schema;
 use yii\helpers\Json;
 
@@ -70,7 +71,7 @@ class Notifications extends \yii\db\ActiveRecord
     public function beforeValidate()
     {
         // Initializing model's attributes through the linked [Notification]
-        if($this->isNewRecord && !empty($this->notification)) {
+        if ($this->isNewRecord && !empty($this->notification)) {
             $className = get_class($this->notification);
             $currTime = time();
             $this->setAttributes([
@@ -96,7 +97,7 @@ class Notifications extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         // We need to generate a path for the documents so that
-        if($insert) {
+        if ($insert) {
             $attachments = $this->attachments;
             // Normalizing the attachments so that the path will be the module temporary file, the original path
             // will be stored in realPath so that it can be copied in the afterSave
@@ -118,11 +119,31 @@ class Notifications extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         $this->decodeAttachments();
-        if($insert) {
+        if ($insert) {
             // Copying the files to the temporary folder of the notifications so that they can be deleted after the
             // notification is sent
             foreach ($this->attachments as $attachment) {
-                copy($attachment['realPath'], $attachment['path']);
+                if (!file_exists($attachment['realPath'])) {
+                    if (YII_DEBUG) {
+                        throw new ErrorException("The file {$attachment['realPath']} does not exists.");
+                    }
+                    Yii::error([
+                        'msg' => "The file does not exists",
+                        'file' => $attachment['realPath'],
+                        'notification' => $this->toArray(),
+                    ]);
+                }
+                if (!@copy($attachment['realPath'], $attachment['path'])) {
+                    if (YII_DEBUG) {
+                        throw new ErrorException("Could not copy {$attachment['realPath']} file to {$attachment['path']}.");
+                    }
+                    Yii::error([
+                        'msg' => "Could not copy the file",
+                        'from' => $attachment['realPath'],
+                        'to' => $attachment['path'],
+                        'notification' => $this->toArray(),
+                    ]);
+                }
             }
         }
         parent::afterSave($insert, $changedAttributes);
