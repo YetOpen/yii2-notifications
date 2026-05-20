@@ -52,7 +52,7 @@ class Module extends \yii\base\Module
      * @param array|null $channels
      * @return bool If the sending was successful or not.
      */
-    public function send($notification, array $channels = null)
+    public function send($notification, ?array $channels = null)
     {
         /** @var \Da\User\Model\User $user */
         $user = (Yii::$app->user->identityClass::findOne($notification->userId));
