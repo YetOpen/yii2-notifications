@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.0.0 Sep 16, 2026
 
 - Added realtime push for the `screen` channel badge, via `Module::$counter_notifier`
   (`base\NotificationCounterNotifier`) and new `realtimeClient`/`realtimeTopic`/`realtimeAsset`
@@ -14,6 +14,7 @@
 - Fixed: notifications with no `send_at` (i.e. not scheduled) were never counted or listed by the
   badge, since `send_at <= now` excludes `NULL` rows in SQL.
 - `Module::send()` now publishes the counter once per call instead of once per channel.
+- Fixed implicit nullable parameter for PHP 8.5 compatibility
 
 ## 0.3.6 Jul 18, 2024
 
